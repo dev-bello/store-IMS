@@ -15,7 +15,6 @@ const Dashboard = () => {
     .slice(0, 5);
 
   // Get low stock items (less than 10 units)
-  const lowStockItems = inventory.filter((item) => item.quantity < 10);
 
   // Count total items issued
   const totalItemsIssued = requisitions.reduce((total, req) => {

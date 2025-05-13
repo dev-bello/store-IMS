@@ -1,17 +1,26 @@
-"use client"
-import { Document, Packer, Paragraph, Table, TableCell, TableRow, TextRun, AlignmentType } from "docx"
-import { saveAs } from "file-saver"
-import "./ReportTemplate.css"
+"use client";
+import { saveAs } from "file-saver";
+import "./ReportTemplate.css";
 
 const ReportTemplate = ({ title, date, items, reportType, month, year }) => {
   const formattedDate = new Date(date).toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "long",
     year: "numeric",
-  })
+  });
 
-  const handleDownloadDocx = () => {
-    // Create document
+  const handleDownloadDocx = async () => {
+    const {
+      Document,
+      Packer,
+      Paragraph,
+      Table,
+      TableCell,
+      TableRow,
+      TextRun,
+      AlignmentType,
+    } = await import("docx");
+
     const doc = new Document({
       sections: [
         {
@@ -28,13 +37,22 @@ const ReportTemplate = ({ title, date, items, reportType, month, year }) => {
               heading: "Heading2",
             }),
             new Paragraph({
-              children: [new TextRun({ text: "To: ", bold: true }), new TextRun("AD, Admin")],
+              children: [
+                new TextRun({ text: "To: ", bold: true }),
+                new TextRun("AD, Admin"),
+              ],
             }),
             new Paragraph({
-              children: [new TextRun({ text: "From: ", bold: true }), new TextRun("MGR, Stores")],
+              children: [
+                new TextRun({ text: "From: ", bold: true }),
+                new TextRun("MGR, Stores"),
+              ],
             }),
             new Paragraph({
-              children: [new TextRun({ text: "Date: ", bold: true }), new TextRun(formattedDate)],
+              children: [
+                new TextRun({ text: "Date: ", bold: true }),
+                new TextRun(formattedDate),
+              ],
             }),
             new Paragraph({
               text: title,
@@ -54,32 +72,26 @@ const ReportTemplate = ({ title, date, items, reportType, month, year }) => {
                 new TableRow({
                   children: [
                     new TableCell({
-                      width: {
-                        size: 10,
-                        type: "pct",
-                      },
+                      width: { size: 10, type: "pct" },
                       children: [new Paragraph({ text: "S/N", bold: true })],
                     }),
                     new TableCell({
-                      width: {
-                        size: 50,
-                        type: "pct",
-                      },
-                      children: [new Paragraph({ text: "DESCRIPTION", bold: true })],
+                      width: { size: 50, type: "pct" },
+                      children: [
+                        new Paragraph({ text: "DESCRIPTION", bold: true }),
+                      ],
                     }),
                     new TableCell({
-                      width: {
-                        size: 20,
-                        type: "pct",
-                      },
-                      children: [new Paragraph({ text: "QUANTITY", bold: true })],
+                      width: { size: 20, type: "pct" },
+                      children: [
+                        new Paragraph({ text: "QUANTITY", bold: true }),
+                      ],
                     }),
                     new TableCell({
-                      width: {
-                        size: 20,
-                        type: "pct",
-                      },
-                      children: [new Paragraph({ text: "REMARKS", bold: true })],
+                      width: { size: 20, type: "pct" },
+                      children: [
+                        new Paragraph({ text: "REMARKS", bold: true }),
+                      ],
                     }),
                   ],
                 }),
@@ -88,37 +100,44 @@ const ReportTemplate = ({ title, date, items, reportType, month, year }) => {
                     new TableRow({
                       children: [
                         new TableCell({
-                          children: [new Paragraph({ text: (index + 1).toString() })],
+                          children: [
+                            new Paragraph({ text: (index + 1).toString() }),
+                          ],
                         }),
                         new TableCell({
                           children: [new Paragraph({ text: item.name })],
                         }),
                         new TableCell({
-                          children: [new Paragraph({ text: `${item.quantity} ${item.unit}` })],
+                          children: [
+                            new Paragraph({
+                              text: `${item.quantity} ${item.unit}`,
+                            }),
+                          ],
                         }),
                         new TableCell({
-                          children: [new Paragraph({ text: item.remarks.join(", ") || "" })],
+                          children: [
+                            new Paragraph({
+                              text: item.remarks.join(", ") || "",
+                            }),
+                          ],
                         }),
                       ],
-                    }),
+                    })
                 ),
               ],
             }),
           ],
         },
       ],
-    })
+    });
 
-    // Generate and save document
-    Packer.toBlob(doc).then((blob) => {
-      const reportName =
-        reportType === "monthly"
-          ? `NMDPRA_Monthly_Report_${month}_${year}.docx`
-          : `NMDPRA_Weekly_Report_${new Date().toISOString().split("T")[0]}.docx`
-
-      saveAs(blob, reportName)
-    })
-  }
+    const blob = await Packer.toBlob(doc);
+    const reportName =
+      reportType === "monthly"
+        ? `NMDPRA_Monthly_Report_${month}_${year}.docx`
+        : `NMDPRA_Weekly_Report_${new Date().toISOString().split("T")[0]}.docx`;
+    saveAs(blob, reportName);
+  };
 
   return (
     <div className="report-template">
@@ -127,7 +146,6 @@ const ReportTemplate = ({ title, date, items, reportType, month, year }) => {
           Download as DOCX
         </button>
       </div>
-
       <div className="report-preview">
         <div className="report-header">
           <div className="report-logo">
@@ -151,7 +169,6 @@ const ReportTemplate = ({ title, date, items, reportType, month, year }) => {
           </div>
           <h3 className="report-title">{title}</h3>
         </div>
-
         <table className="report-table">
           <thead>
             <tr>
@@ -184,7 +201,7 @@ const ReportTemplate = ({ title, date, items, reportType, month, year }) => {
         </table>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ReportTemplate
+export default ReportTemplate;
