@@ -1,5 +1,4 @@
 "use client";
-import { saveAs } from "file-saver";
 import "./ReportTemplate.css";
 
 const ReportTemplate = ({ title, date, items, reportType, month, year }) => {
@@ -58,16 +57,10 @@ const ReportTemplate = ({ title, date, items, reportType, month, year }) => {
               text: title,
               alignment: AlignmentType.CENTER,
               heading: "Heading3",
-              spacing: {
-                before: 400,
-                after: 400,
-              },
+              spacing: { before: 400, after: 400 },
             }),
             new Table({
-              width: {
-                size: 100,
-                type: "pct",
-              },
+              width: { size: 100, type: "pct" },
               rows: [
                 new TableRow({
                   children: [
@@ -136,7 +129,15 @@ const ReportTemplate = ({ title, date, items, reportType, month, year }) => {
       reportType === "monthly"
         ? `NMDPRA_Monthly_Report_${month}_${year}.docx`
         : `NMDPRA_Weekly_Report_${new Date().toISOString().split("T")[0]}.docx`;
-    saveAs(blob, reportName);
+
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = reportName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(blobUrl);
   };
 
   return (
